@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Bit Terminal Bird</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="ui-layer">
+            <h1 id="score-display">0</h1>
+            
+            <div id="start-screen" class="screen">
+                <h2>TERMINAL BIRD</h2>
+                <p>HIGH SCORE: <span id="start-high-score">0</span></p>
+                <div id="start-leaderboard">
+                    <p style="text-decoration: underline; margin-top: 15px;">TOP OPERATORS</p>
+                    <ul id="leaderboard-list" class="leaderboard-list">
+                        <li>LOADING DATA...</li>
+                    </ul>
+                </div>
+                <p style="margin-top: 20px;">Press SPACE or CLICK to FLAP</p>
+                <div class="blinking-cursor">_</div>
+            </div>
+
+            <div id="initials-screen" class="screen hidden">
+                <h2>NEW HIGH SCORE!</h2>
+                <p>SCORE: <span id="new-high-score-display">0</span></p>
+                <p>ENTER FIRST NAME:</p>
+                <input id="initials-input" type="text" maxlength="15" autocomplete="off" spellcheck="false" placeholder="NAME" />
+                <p style="font-size: 16px; margin-top: 15px;">Press ENTER to submit</p>
+                <div id="upload-status" style="font-size: 14px; margin-top: 10px; color: yellow;"></div>
+            </div>
+
+            <div id="game-over-screen" class="screen hidden">
+                <h2>GAME OVER</h2>
+                <p>SCORE: <span id="final-score">0</span></p>
+                <p>LOCAL HIGH SCORE: <span id="game-over-high-score">0</span></p>
+                <p style="margin-top: 20px;">Press SPACE/CLICK to RESTART</p>
+                <div class="blinking-cursor">_</div>
+            </div>
+        </div>
+        <div class="scanlines"></div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

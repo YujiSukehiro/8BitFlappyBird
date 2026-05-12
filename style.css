@@ -1,0 +1,152 @@
+:root {
+    --terminal-green: #33ff00;
+    --terminal-dark-green: #1a8000;
+    --terminal-black: #050505;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'VT323', 'Courier New', Courier, monospace;
+    color: var(--terminal-green);
+    overflow: hidden;
+}
+
+#game-container {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    box-shadow: 0 0 20px rgba(51, 255, 0, 0.2);
+    border: 2px solid var(--terminal-green);
+    background-color: var(--terminal-black);
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#score-display {
+    font-size: 64px;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    text-shadow: 0 0 5px var(--terminal-green);
+    z-index: 10;
+}
+
+.screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background-color: rgba(5, 5, 5, 0.9);
+    padding: 20px;
+    border: 1px solid var(--terminal-green);
+    box-shadow: 0 0 10px rgba(51, 255, 0, 0.3);
+    width: 80%;
+    pointer-events: auto; /* Buttons / clicks could work here */
+}
+
+.screen h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px var(--terminal-green);
+}
+
+.screen p {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.blinking-cursor {
+    display: inline-block;
+    width: 15px;
+    height: 3px;
+    background-color: var(--terminal-green);
+    animation: blink 1s step-end infinite;
+    margin-top: 20px;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0,0,0,0.25) 50%,
+        rgba(0,0,0,0.25)
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+#initials-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--terminal-green);
+    color: var(--terminal-green);
+    font-family: 'VT323', 'Courier New', Courier, monospace;
+    font-size: 48px;
+    text-align: center;
+    width: 250px;
+    text-transform: uppercase;
+    outline: none;
+    margin-top: 10px;
+}
+
+#initials-input::placeholder {
+    color: rgba(51, 255, 0, 0.3);
+}
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    text-align: left;
+    font-size: 20px;
+}
+
+.leaderboard-list li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    border-bottom: 1px dashed rgba(51, 255, 0, 0.2);
+}
+
+.leaderboard-score {
+    text-align: right;
+}
