@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHNC Global Scoreboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            background-color: transparent; /* Allows SharePoint bg to show */
+            font-family: 'VT323', monospace;
+            color: #33ff00;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin: 0;
+            text-shadow: 0 0 10px #33ff00;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .scoreboard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .game-card {
+            flex: 1 1 300px; /* Grow, shrink, base width */
+            max-width: 400px;
+            background-color: #050505;
+            border: 3px solid #33ff00;
+            box-shadow: 0 0 15px rgba(51, 255, 0, 0.2), inset 0 0 10px rgba(51, 255, 0, 0.1);
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Game of the Week Highlighting */
+        .game-card.highlight {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.2);
+            transform: scale(1.02);
+            z-index: 10;
+        }
+
+        .highlight-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffd700;
+            color: #000;
+            padding: 2px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #ffd700;
+            white-space: nowrap;
+        }
+
+        .game-card-title {
+            font-size: 28px;
+            text-align: center;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            border-bottom: 2px dashed rgba(51, 255, 0, 0.4);
+            padding-bottom: 10px;
+        }
+
+        .game-card.highlight .game-card-title {
+            text-shadow: 0 0 5px #ffd700;
+            color: #ffd700;
+            border-bottom-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .score-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .score-list li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            margin-bottom: 10px;
+            background: rgba(51, 255, 0, 0.05);
+            padding: 5px 10px;
+        }
+
+        .score-list li:nth-child(1) { color: #ffd700; border-left: 4px solid #ffd700; }
+        .score-list li:nth-child(2) { color: #c0c0c0; border-left: 4px solid #c0c0c0; }
+        .score-list li:nth-child(3) { color: #cd7f32; border-left: 4px solid #cd7f32; }
+
+        .score-value {
+            text-align: right;
+        }
+
+        .loading-text {
+            text-align: center;
+            font-size: 20px;
+            animation: pulse 1.5s infinite;
+            color: #33ff00;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>IHNC 8-BIT LEADERBOARD</h1>
+    </div>
+    
+    <div class="scoreboard-grid" id="scoreboard-grid">
+        <!-- Cards will be injected here by JS -->
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION: EASY TO UPDATE EVERY WEEK!
+        // ==========================================
+        
+        // 1. Set the exact name of the highlighted game this week
+        const gameOfTheWeek = "An IHNC Trail";
+        
+        // 2. List all the games you want to show on the board
+        const gamesList = [
+            "Flappy Birds", 
+            "Frogger", 
+            "PacMed", 
+            "An IHNC Trail"
+        ];
+        
+        // 3. Your Google Web App API URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbxEcmKfj9-Tg5K9QlM1-LXAwycNaplQNBtrELz_qQt5LDkL27BmfntC-RnmNatfJPKs/exec";
+        
+        // ==========================================
+
+        const gridContainer = document.getElementById('scoreboard-grid');
+
+        // Function to create the HTML shell for a game card
+        function createGameCard(gameName) {
+            const isHighlight = (gameName === gameOfTheWeek);
+            
+            const card = document.createElement('div');
+            card.className = `game-card ${isHighlight ? 'highlight' : ''}`;
+            card.id = `card-${gameName.replace(/\s+/g, '-')}`;
+
+            let highlightHtml = '';
+            if (isHighlight) {
+                highlightHtml = `<div class="highlight-badge">★ GAME OF THE WEEK ★</div>`;
+            }
+
+            card.innerHTML = `
+                ${highlightHtml}
+                <h2 class="game-card-title">${gameName}</h2>
+                <ul class="score-list" id="list-${gameName.replace(/\s+/g, '-')}">
+                    <li class="loading-text">LOADING...</li>
+                </ul>
+            `;
+            
+            gridContainer.appendChild(card);
+            return document.getElementById(`list-${gameName.replace(/\s+/g, '-')}`);
+        }
+
+        // Function to fetch data for ONE specific game and update its card
+        async function fetchGameScores(gameName, listElement) {
+            try {
+                const response = await fetch(API_URL + "?game=" + encodeURIComponent(gameName));
+                const data = await response.json();
+                
+                listElement.innerHTML = '';
+                
+                if (data.length === 0) {
+                    listElement.innerHTML = '<li style="color:#33ff00; border:none; justify-content:center;">AWAITING FIRST OPERATOR</li>';
+                } else {
+                    data.forEach(entry => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span>${entry.initials}</span> <span class="score-value">${entry.score}</span>`;
+                        listElement.appendChild(li);
+                    });
+                }
+            } catch (e) {
+                listElement.innerHTML = '<li style="color:red; border:none; justify-content:center;">ERROR RETRIEVING DATA</li>';
+            }
+        }
+
+        // Main function to build the board
+        function initializeScoreboard() {
+            gridContainer.innerHTML = ''; // Clear container
+            
+            // For each game, create its card, then fetch its data concurrently
+            gamesList.forEach(game => {
+                const listEl = createGameCard(game);
+                fetchGameScores(game, listEl);
+            });
+        }
+
+        // Boot it up!
+        initializeScoreboard();
+
+        // Refresh all scores automatically every 30 seconds
+        setInterval(initializeScoreboard, 30000);
+    </script>
+</body>
+</html>
